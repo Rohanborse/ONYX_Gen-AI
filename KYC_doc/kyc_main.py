@@ -79,30 +79,8 @@ def gemini_output(image_path, system_prompt, user_prompt):
 
 
 # Process file and extract data
-def process_file(file_path):
+def process_file(file_path, system_prompt, user_prompt):
     _, file_extension = os.path.splitext(file_path.lower())
-    system_prompt = """
-        You are a specialist in analyzing government-issued identity documents.
-        You will receive images of documents such as PAN cards and Aadhar cards,
-        and your task is to extract structured data fields based on the document type.
-        """
-    user_prompt = """
-        You are an intelligent assistant specialized in extracting structured data from government-issued documents. 
-        Given the text extracted from an identity document, please provide the following fields in JSON format based on the document type:
-        For a PAN Card:
-        - "documentType": "PAN Card"
-        - "panNumber": The Permanent Account Number (PAN) on the card.
-        - "name": The name of the individual.
-        - "fatherName": The father's name (if present). (father name will be the next line of the name)
-        - "dateOfBirth": The date of birth in the format DD/MM/YYYY. (dateOfBirth will be the next line of father name)
-        For an Aadhar Card:
-        - "documentType": "Aadhar Card"
-        - "Aadhar Number": The unique 12-digit Aadhar number.
-        - "Name": The name of the individual.
-        - "dateOfBirth": The date of birth in the format DD/MM/YYYY. (if Date of Birth is not present then Year Of Birth will be present and that will be in YYYY forma but it will also included in dateOfBirth )
-        - "Address": The full address including street, city, district, state, and postal code.
-        Ensure the fields are extracted accurately, respecting any formatting for dates and numbers. 
-        """
 
     if file_extension == ".pdf":
         image_paths = pdf_to_image(file_path)
