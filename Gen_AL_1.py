@@ -33,7 +33,7 @@ def image_format(image_path):
 # Function to extract structured data using Gemini
 def extract_table_from_image(image_path):
     system_prompt = "Extract structured table data from the image and return as JSON. Include headers and values."
-    user_prompt = "Extract the table with columns: Sr.No., Description, Process, Color, Qty/Assem. Return JSON format."
+    user_prompt = "Extract the table with columns: Sr.No., Description, Process, Color, Qty/Assem, etc. Return JSON format.and if no table present then add one more coloumn that  extracr all text from the given image"
 
     image_info = image_format(image_path)
     input_prompt = [system_prompt, image_info[0], user_prompt]
