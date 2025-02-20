@@ -32,19 +32,6 @@ model = genai.GenerativeModel(model_name="gemini-1.5-flash", generation_config=M
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
-# PostgreSQL Database connection
-def get_db_connection():
-    conn = psycopg2.connect(
-        host="157.20.51.93",
-        database="adm_db",
-        user="postgres",
-        password="Vikas$7!5&v^ate@",
-        port="9871"
-    )
-    return conn
-
-
 # PDF to Image Conversion
 def pdf_to_image(pdf_path):
     images = convert_from_path(pdf_path, poppler_path='C:\\Program Files (x86)\\poppler-24.08.0\\Library\\bin')
@@ -102,56 +89,68 @@ def process_file(file_path, system_prompt, user_prompt):
     except json.JSONDecodeError as e:
         print(f"Error parsing JSON: {e}")
         return {}
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# PostgreSQL Database connection
+# def get_db_connection():
+#     conn = psycopg2.connect(
+#         host="157.20.51.93",
+#         database="adm_db",
+#         user="postgres",
+#         password="Vikas$7!5&v^ate@",
+#         port="9871"
+#     )
+#     return conn
 
 
-def save_data_to_db(extracted_data):
-    conn = None
-    try:
-        # Establish database connection
-        conn = get_db_connection()
-        cursor = conn.cursor()
-
-        # Get document type from the extracted data
-        document_type = extracted_data.get("documentType")
-
-        # Insert PAN Card data if the document is of type "PAN Card"
-        if document_type == "PAN Card":
-            cursor.execute(
-                """INSERT INTO KYC_Document (documentType, panNumber, name, fatherName, dateOfBirth) VALUES (%s, %s, %s, %s, %s)""",
-                (extracted_data.get("documentType"),
-                 extracted_data.get("panNumber"),
-                 extracted_data.get("name"),
-                 extracted_data.get("fatherName"),
-                 extracted_data.get("dateOfBirth"))
-            )
-
-        # Insert Aadhar Card data if the document is of type "Aadhar Card"
-        elif document_type == "Aadhar Card":
-            cursor.execute(
-                """INSERT INTO KYC_Document (documentType, aadharNumber, name, dateOfBirth, address) VALUES (%s, %s, %s, %s, %s)""",
-                (extracted_data.get("documentType"),
-                 extracted_data.get("Aadhar Number"),
-                 extracted_data.get("Name"),
-                 extracted_data.get("dateOfBirth"),
-                 extracted_data.get("Address"))
-            )
-
-        # Commit transaction
-        conn.commit()
-        print("Data saved to database successfully.")
-
-    except Exception as e:
-        # Print or log the error
-        print(f"Error saving data to database: {e}")
-        if conn:
-            conn.rollback()  # Rollback in case of error
-
-    finally:
-        # Ensure the connection is closed
-        if conn:
-            cursor.close()
-            conn.close()
-            print("Database connection closed.")
+# def save_data_to_db(extracted_data):
+#     conn = None
+#     try:
+#         # Establish database connection
+#         conn = get_db_connection()
+#         cursor = conn.cursor()
+#
+#         # Get document type from the extracted data
+#         document_type = extracted_data.get("documentType")
+#
+#         # Insert PAN Card data if the document is of type "PAN Card"
+#         if document_type == "PAN Card":
+#             cursor.execute(
+#                 """INSERT INTO KYC_Document (documentType, panNumber, name, fatherName, dateOfBirth) VALUES (%s, %s, %s, %s, %s)""",
+#                 (extracted_data.get("documentType"),
+#                  extracted_data.get("panNumber"),
+#                  extracted_data.get("name"),
+#                  extracted_data.get("fatherName"),
+#                  extracted_data.get("dateOfBirth"))
+#             )
+#
+#         # Insert Aadhar Card data if the document is of type "Aadhar Card"
+#         elif document_type == "Aadhar Card":
+#             cursor.execute(
+#                 """INSERT INTO KYC_Document (documentType, aadharNumber, name, dateOfBirth, address) VALUES (%s, %s, %s, %s, %s)""",
+#                 (extracted_data.get("documentType"),
+#                  extracted_data.get("Aadhar Number"),
+#                  extracted_data.get("Name"),
+#                  extracted_data.get("dateOfBirth"),
+#                  extracted_data.get("Address"))
+#             )
+#
+#         # Commit transaction
+#         conn.commit()
+#         print("Data saved to database successfully.")
+#
+#     except Exception as e:
+#         # Print or log the error
+#         print(f"Error saving data to database: {e}")
+#         if conn:
+#             conn.rollback()  # Rollback in case of error
+#
+#     finally:
+#         # Ensure the connection is closed
+#         if conn:
+#             cursor.close()
+#             conn.close()
+#             print("Database connection closed.")
 
 
 

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload and Data Extraction</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background: linear-gradient(90deg, #9562f8, #5ce1e6);
+            color: white;
+        }
+        #preview-table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            background: white;
+            color: black;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        #preview-table th, #preview-table td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        #preview-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        button {
+            background: #5ce1e6;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #9562f8;
+            color: white;
+        }
+        a#download-link {
+            display: block;
+            margin-top: 15px;
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            background: #9562f8;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        a#download-link:hover {
+            background: #5ce1e6;
+        }
+    </style>
+</head>
+<body>
+    <h2>Upload File for Data Extraction</h2>
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()">Upload</button>
+
+    <div id="preview-container">
+       <h3 style="color: black;">Extracted Data Preview</h3>
+        <table id="preview-table">
+            <thead>
+                <tr></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <a id="download-link" style="display: none;" download>Download Excel File</a>
+    </div>
+
+    <script>
+        function uploadFile() {
+            let file = document.getElementById("fileInput").files[0];
+            if (!file) {
+                alert("Please select a file.");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("file", file);
+
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                    return;
+                }
+
+                document.getElementById("preview-container").style.display = "block";
+                populateTable(data.extracted_json);
+
+                let downloadLink = document.getElementById("download-link");
+                downloadLink.href = data.file_path;
+                downloadLink.style.display = "block";
+                downloadLink.textContent = "Download Extracted Data";
+            })
+            .catch(error => alert("Upload failed: " + error));
+        }
+
+        function populateTable(jsonData) {
+            let tableHead = document.querySelector("#preview-table thead tr");
+            let tableBody = document.querySelector("#preview-table tbody");
+            tableHead.innerHTML = "";
+            tableBody.innerHTML = "";
+
+            let data = JSON.parse(jsonData);
+            if (data.length === 0) return;
+
+            // Set table headers
+            Object.keys(data[0]).forEach(header => {
+                let th = document.createElement("th");
+                th.textContent = header;
+                tableHead.appendChild(th);
+            });
+
+            // Set table rows
+            data.forEach(row => {
+                let tr = document.createElement("tr");
+                Object.values(row).forEach(value => {
+                    let td = document.createElement("td");
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>

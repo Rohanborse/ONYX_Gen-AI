@@ -15,13 +15,13 @@ class APIManager:
 
         # Randomly select a key from available keys
         selected_key = random.choice(self.available_keys)
+        print(selected_key)
         # Remove the selected key from the available list
         self.available_keys.remove(selected_key)
         return selected_key
 
 
 # List of API keys (update the list with your keys)
-
 API_KEYS = [
     "AIzaSyCCMYyicdsYdfQGRjDr3HAs0ncPFcIdIpE", # 1
     "AIzaSyCS_9W2zFwJ-vN96PW4w0EtU5f5tFOWB_o", # 1
@@ -29,12 +29,11 @@ API_KEYS = [
     "AIzaSyBcqaGmVIBd-21S7ncw1TO43Oa8vpyRirg", # 1
     "AIzaSyCwPOjW_MJGkGPRPO7e3i5NRE1i2EpPe00" # 1
 ]
-
 # Create an instance of APIManager
-
 api_manager = APIManager(API_KEYS)
 
-
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ADHAR CARD
 system_prompt_Adhar = """
         You are a specialist in analyzing government-issued identity documents.
         You will receive images of documents such as PAN cards and Aadhar cards,
@@ -52,7 +51,8 @@ user_prompt_Adhar = """
         Ensure the fields are extracted accurately, respecting any formatting for dates and numbers. 
         """
 
-
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# PAN CARD
 system_prompt_pan = """
         You are a specialist in analyzing government-issued identity documents.
         You will receive images of documents such as PAN cards and Aadhar cards,

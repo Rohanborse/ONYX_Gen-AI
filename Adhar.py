@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import os
 from werkzeug.utils import secure_filename
-from KYC_doc.kyc_main import process_file, save_data_to_db
+from KYC_doc.kyc_main import process_file
 from api_maneger import system_prompt_Adhar, system_prompt_pan, user_prompt_pan, user_prompt_Adhar
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -25,9 +25,7 @@ def upload_pan():
 
     extracted_data = process_file(filepath, system_prompt_pan, user_prompt_pan)
     if extracted_data and extracted_data.get("documentType") == "PAN Card":
-        save_data_to_db(extracted_data)
         return jsonify({'message': 'PAN Card processed successfully', 'data': extracted_data}), 200
-
     return jsonify({'error': 'Invalid PAN Card data'}), 400
 
 # File Upload & Processing for Aadhar Card
@@ -46,12 +44,9 @@ def upload_aadhar():
 
     extracted_data = process_file(filepath, system_prompt_Adhar, user_prompt_Adhar)
     if extracted_data and extracted_data.get("documentType") == "Aadhar Card":
-        save_data_to_db(extracted_data)
         return jsonify({'message': 'Aadhar Card processed successfully', 'data': extracted_data}), 200
-
     return jsonify({'error': 'Invalid Aadhar Card data'}), 400
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000, debug=True)
-
+if __name__ == '__main__':
+    app.run(debug=True)
